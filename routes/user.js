@@ -56,6 +56,7 @@
 
 
 // ==========================async await ============
+// Signup ap
 const express = require('express');
 const router = express.Router()
 const User = require('../models/User')
@@ -93,3 +94,49 @@ router.post('/signup', async (req, res) => {
   }
 })
 module.exports = router;
+
+
+//login api
+router.post('/login',async(req,res)=>{
+  try{
+    const users= await User.find({email:req.body.email})
+    if(users.lenght == 0)
+    {
+         res.status(500).json({
+          error:'email is not registered'
+         })
+    }
+    const isvalid = await bcrypt.compare(req.body.password,users[0].password)
+    if(isvalid)
+    {
+      const token = await jwt.sign({
+        _id:users[0]._id,
+        fullName:users[0].fullName,
+        email:users[0].email
+      },
+      'sbs online calsses 123',
+      {
+        expiresIn:'365d'
+      })
+    }
+    else{
+       res.status(500).json({
+        error:'password matching failed'
+       })
+    }
+    res.status(200).json({
+      _id:users[0]._id,
+      fullName:users[0].fullName,
+      email:users[0].email,
+      token:token
+    })
+
+  }
+  catch(err){
+    console.log(err)
+    res.status(500).json({
+      error:err
+    })
+  }
+  
+})
