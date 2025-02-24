@@ -9,18 +9,18 @@ const jwt = require('jsonwebtoken');
 const cloudinary = require('cloudinary').v2
 require('dotenv').config()
 
-  // Configuration
+  
   cloudinary.config({ 
     cloud_name: process.env.CLOUD_NAME, 
-    api_key: process.env.API_KEY, 
-    api_secret: process.env.SECRECT_KEY // Click 'View API Keys' above to copy your API secret
+    api_key: process.env.API_KEY,
+    api_secret: process.env.SECRECT_KEY 
 });
 router.post('/signup', async (req, res) => {
   
   
   try {
    const uploadedImage = await cloudinary.uploader.upload(req.files.photo.tempFilePath)
-  //  console.log(uploadedImage)
+  
     const users = await User.find({ email: req.body.email });
     if (users.length > 0) {
       return res.status(409).json({
@@ -34,7 +34,7 @@ router.post('/signup', async (req, res) => {
       fullName: req.body.fullName,
       email: req.body.email,
       phone: req.body.phone,
-      address: req.body.address,
+      // address: req.body.address,
       imageUrl:uploadedImage.secure_url,
       imageId:uploadedImage.public_id,
       password: hashCode,
@@ -56,39 +56,39 @@ module.exports = router;
 
 
 //login api
-router.post('/login', async (req, res) => {
-  try {
+// router.post('/login', async (req, res) => {
+//   try {
 
-    const users = await User.find({ email: req.body.email });
-    if (users.length === 0) {
-      return res.status(500).json({
-        error: 'Email is not registered'
-      });
-    }
-    const isValid = await bcrypt.compare(req.body.password, users[0].password);
-    if (!isValid) {
-      return res.status(500).json({
-        error: 'Password matching failed'
-      });
-    }
+//     const users = await User.find({ email: req.body.email });
+//     if (users.length === 0) {
+//       return res.status(500).json({
+//         error: 'Email is not registered'
+//       });
+//     }
+//     const isValid = await bcrypt.compare(req.body.password, users[0].password);
+//     if (!isValid) {
+//       return res.status(500).json({
+//         error: 'Password matching failed'
+//       });
+//     }
 
-    const token = await jwt.sign({
-      _id: users[0]._id,
-      fullName: users[0].fullName,
-      email: users[0].email
-    }, 'sbs online classes 123', {
-      expiresIn: '365d'
-    });
-    return res.status(200).json({
-      _id: users[0]._id,
-      fullName: users[0].fullName,
-      email: users[0].email,
-      token: token
-    });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      error: err
-    });
-  }
-});
+//     const token = await jwt.sign({
+//       _id: users[0]._id,
+//       fullName: users[0].fullName,
+//       email: users[0].email
+//     }, 'sbs online classes 123', {
+//       expiresIn: '365d'
+//     });
+//     return res.status(200).json({
+//       _id: users[0]._id,
+//       fullName: users[0].fullName,
+//       email: users[0].email,
+//       token: token
+//     });
+//   } catch (err) {
+//     console.log(err);
+//     return res.status(500).json({
+//       error: err
+//     });
+//   }
+// });

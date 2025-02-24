@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 const mongoose =require('mongoose')
 const userRoute = require('./routes/user')
 const fileUpload = require('express-fileupload');
+var cors = require('cors')
 
 const connectWithDatabase =async()=>{
     try{
@@ -19,6 +20,7 @@ app.use(fileUpload({
   useTempFiles : true,
  
 }));
+app.use(cors())
 app.use(bodyParser.json())
 app.use('/user',userRoute)
 
